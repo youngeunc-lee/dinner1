@@ -127,11 +127,12 @@
 
             <section>
                 <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">5. 어떤 종류의 음식을 원하세요?</h2>
-                <div id="cuisine-options" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div id="cuisine-options" class="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="한식"><div class="text-3xl mb-2">🇰🇷</div><div class="font-semibold">한식</div></div>
                     <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="중식"><div class="text-3xl mb-2">🇨🇳</div><div class="font-semibold">중식</div></div>
                     <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="양식"><div class="text-3xl mb-2">🍕</div><div class="font-semibold">양식/치킨</div></div>
                     <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="분식"><div class="text-3xl mb-2">떡볶이</div><div class="font-semibold">분식</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="건강식"><div class="text-3xl mb-2">🥗</div><div class="font-semibold">건강식</div></div>
                 </div>
             </section>
             
@@ -196,10 +197,98 @@
     <script>
         // --- Database ---
         const recipes = [
-            // 직접 요리
-            { name: '돼지고기 김치찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['돼지고기', '김치'], childMenu: '계란찜' }, { name: '차돌 된장찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '국물/찌개', time: 20, ingredients: ['차돌박이', '된장'], childMenu: '어묵볶음' }, { name: '얼큰 순두부찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 20, ingredients: ['순두부', '계란'], childMenu: '콩나물무침' }, { name: '소고기 뭇국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['소고기', '무'], childMenu: '동그랑땡' }, { name: '닭볶음탕', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '국물/찌개', time: 60, ingredients: ['닭', '감자', '고추장'], childMenu: '콘치즈' }, { name: '누룽지 백숙', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '누룽지'], childMenu: '겉절이' }, { name: '김치볶음밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['김치', '밥', '계란'], childMenu: '계란국' }, { name: '스팸마요덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['스팸', '마요네즈', '계란'], childMenu: null }, { name: '간장계란밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['계란', '간장', '버터'], childMenu: null }, { name: '비빔국수', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['소면', '고추장', '오이'], childMenu: '삶은계란' }, { name: '제육볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '고추장'], childMenu: '상추쌈' }, { name: '오징어볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['오징어', '고추장'], childMenu: '콩나물국' }, { name: '소불고기', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '버섯'], childMenu: null }, { name: 'LA갈비구이', type: 'cook', occasion: 'special', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 60, ingredients: ['LA갈비', '간장'], childMenu: '양파절임' }, { name: '간장 찜닭', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 60, ingredients: ['닭', '감자', '당면'], childMenu: null }, { name: '돼지고기 김치찜', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 60, ingredients: ['돼지고기', '김치'], childMenu: '계란말이' }, { name: '두부조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '찜/조림', time: 20, ingredients: ['두부', '간장'], childMenu: '김' }, { name: '고등어조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 40, ingredients: ['고등어', '무'], childMenu: '미역국' }, { name: '에어프라이어 통삼겹', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '튀김/오븐', time: 60, ingredients: ['삼겹살', '허브솔트'], childMenu: '비빔면' }, { name: '마파두부 덮밥', type: 'cook', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['두부', '돼지고기', '두반장'], childMenu: '계란탕' }, { name: '고추잡채', type: 'cook', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '피망', '고추'], childMenu: '꽃빵' }, { name: '크림 파스타', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['파스타면', '생크림', '베이컨'], childMenu: null }, { name: '토마토 리조또', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '면/밥', time: 40, ingredients: ['쌀', '토마토소스'], childMenu: '피클' }, { name: '함박스테이크', type: 'cook', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '돼지고기', '양파'], childMenu: null }, { name: '치킨 가라아게', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 40, ingredients: ['닭다리살', '튀김가루'], childMenu: '양배추샐러드' }, { name: '콘치즈', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 20, ingredients: ['옥수수콘', '치즈', '마요네즈'], childMenu: null },
-            // 배달 음식
-            { name: '매운 족발', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '주먹밥' }, { name: '보쌈', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '막국수' }, { name: '아구찜', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '볶음밥' }, { name: '찜닭', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '누룽지' }, { name: '감자탕', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '라면사리' }, { name: '부대찌개', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '햄사리' }, { name: '육회비빔밥', type: 'delivery', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', childMenu: '소고기뭇국' }, { name: '김치전', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '볶음/구이', childMenu: '막걸리(어른용!)' }, { name: '짜장면 & 탕수육', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'great', method: '면/밥', childMenu: '군만두' }, { name: '중화 비빔밥', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', childMenu: '짬뽕국물' }, { name: '해물 짬뽕', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'rainy', method: '국물/찌개', childMenu: '군만두' }, { name: '마라탕', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'stress', method: '국물/찌개', childMenu: '꿔바로우' }, { name: '양장피', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', childMenu: '고량주(어른용!)' }, { name: '후라이드 & 양념치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈볼' }, { name: '매운 숯불 바베큐 치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'stress', method: '튀김/오븐', childMenu: '우동사리' }, { name: '피자', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈오븐스파게티' }, { name: '로제 파스타', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', childMenu: '마늘빵' }, { name: '스테이크', type: 'delivery', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', childMenu: '가니쉬' }, { name: '돈까스', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '튀김/오븐', childMenu: '미니우동' }, { name: '엽기 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'stress', method: '국물/찌개', childMenu: '순대, 컵밥' }, { name: '로제 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'great', method: '국물/찌개', childMenu: '중국당면' }, { name: '라볶이', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'rainy', method: '국물/찌개', childMenu: '김밥' }, { name: '쫄면', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'stress', method: '면/밥', childMenu: '튀김만두' }, { name: '따뜻한 쌀국수', type: 'delivery', occasion: 'daily', cuisine: '기타', feeling: 'tired', method: '국물/찌개', childMenu: '짜조' }
+            // 직접 요리 (기존)
+            { name: '돼지고기 김치찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['돼지고기', '김치'], childMenu: '계란찜' },
+            { name: '차돌 된장찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '국물/찌개', time: 20, ingredients: ['차돌박이', '된장'], childMenu: '어묵볶음' },
+            { name: '얼큰 순두부찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 20, ingredients: ['순두부', '계란'], childMenu: '콩나물무침' },
+            { name: '소고기 뭇국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['소고기', '무'], childMenu: '동그랑땡' },
+            { name: '닭볶음탕', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '국물/찌개', time: 60, ingredients: ['닭', '감자', '고추장'], childMenu: '콘치즈' },
+            { name: '누룽지 백숙', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '누룽지'], childMenu: '겉절이' },
+            { name: '김치볶음밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['김치', '밥', '계란'], childMenu: '계란국' },
+            { name: '스팸마요덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['스팸', '마요네즈', '계란'], childMenu: null },
+            { name: '간장계란밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['계란', '간장', '버터'], childMenu: null },
+            { name: '비빔국수', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['소면', '고추장', '오이'], childMenu: '삶은계란' },
+            { name: '제육볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '고추장'], childMenu: '상추쌈' },
+            { name: '오징어볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['오징어', '고추장'], childMenu: '콩나물국' },
+            { name: '소불고기', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '버섯'], childMenu: null },
+            { name: 'LA갈비구이', type: 'cook', occasion: 'special', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 60, ingredients: ['LA갈비', '간장'], childMenu: '양파절임' },
+            { name: '간장 찜닭', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 60, ingredients: ['닭', '감자', '당면'], childMenu: null },
+            { name: '돼지고기 김치찜', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 60, ingredients: ['돼지고기', '김치'], childMenu: '계란말이' },
+            { name: '두부조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '찜/조림', time: 20, ingredients: ['두부', '간장'], childMenu: '김' },
+            { name: '고등어조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 40, ingredients: ['고등어', '무'], childMenu: '미역국' },
+            { name: '에어프라이어 통삼겹', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '튀김/오븐', time: 60, ingredients: ['삼겹살', '허브솔트'], childMenu: '비빔면' },
+            { name: '마파두부 덮밥', type: 'cook', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['두부', '돼지고기', '두반장'], childMenu: '계란탕' },
+            { name: '고추잡채', type: 'cook', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '피망', '고추'], childMenu: '꽃빵' },
+            { name: '크림 파스타', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['파스타면', '생크림', '베이컨'], childMenu: null },
+            { name: '토마토 리조또', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '면/밥', time: 40, ingredients: ['쌀', '토마토소스'], childMenu: '피클' },
+            { name: '함박스테이크', type: 'cook', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '돼지고기', '양파'], childMenu: null },
+            { name: '치킨 가라아게', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 40, ingredients: ['닭다리살', '튀김가루'], childMenu: '양배추샐러드' },
+            { name: '콘치즈', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 20, ingredients: ['옥수수콘', '치즈', '마요네즈'], childMenu: null },
+
+            // 배달 음식 (기존)
+            { name: '매운 족발', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '주먹밥' },
+            { name: '보쌈', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '막국수' },
+            { name: '아구찜', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '볶음밥' },
+            { name: '찜닭', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '누룽지' },
+            { name: '감자탕', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '라면사리' },
+            { name: '부대찌개', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '햄사리' },
+            { name: '육회비빔밥', type: 'delivery', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', childMenu: '소고기뭇국' },
+            { name: '김치전', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '볶음/구이', childMenu: '막걸리(어른용!)' },
+            { name: '짜장면 & 탕수육', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'great', method: '면/밥', childMenu: '군만두' },
+            { name: '중화 비빔밥', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', childMenu: '짬뽕국물' },
+            { name: '해물 짬뽕', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'rainy', method: '국물/찌개', childMenu: '군만두' },
+            { name: '마라탕', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'stress', method: '국물/찌개', childMenu: '꿔바로우' },
+            { name: '양장피', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', childMenu: '고량주(어른용!)' },
+            { name: '후라이드 & 양념치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈볼' },
+            { name: '매운 숯불 바베큐 치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'stress', method: '튀김/오븐', childMenu: '우동사리' },
+            { name: '피자', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈오븐스파게티' },
+            { name: '로제 파스타', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', childMenu: '마늘빵' },
+            { name: '스테이크', type: 'delivery', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', childMenu: '가니쉬' },
+            { name: '돈까스', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '튀김/오븐', childMenu: '미니우동' },
+            { name: '엽기 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'stress', method: '국물/찌개', childMenu: '순대, 컵밥' },
+            { name: '로제 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'great', method: '국물/찌개', childMenu: '중국당면' },
+            { name: '라볶이', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'rainy', method: '국물/찌개', childMenu: '김밥' },
+            { name: '쫄면', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'stress', method: '면/밥', childMenu: '튀김만두' },
+            { name: '따뜻한 쌀국수', type: 'delivery', occasion: 'daily', cuisine: '기타', feeling: 'tired', method: '국물/찌개', childMenu: '짜조' },
+
+            // 새로 추가된 레시피 (인기 검색 기반, 영양 균형 고려 - 예: 채소/단백질 중심)
+            { name: '버섯덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['버섯', '밥', '간장'], childMenu: '계란프라이' },
+            { name: '스팸두부조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 20, ingredients: ['스팸', '두부', '고추장'], childMenu: '시금치무침' },
+            { name: '훈제오리 부추무침', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 20, ingredients: ['훈제오리', '부추', '간장'], childMenu: null },
+            { name: '어묵탕', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['어묵', '무', '대파'], childMenu: '김치' },
+            { name: '닭곰탕', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '마늘', '대파'], childMenu: '깻잎무침' },
+            { name: '오징어무국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['오징어', '무', '고춧가루'], childMenu: '반찬' },
+            { name: '곱창전골', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '국물/찌개', time: 60, ingredients: ['곱창', '야채', '고추장'], childMenu: '라면' },
+            { name: '오징어덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['오징어', '밥', '양파'], childMenu: null },
+            { name: '황태무국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 40, ingredients: ['황태', '무', '대파'], childMenu: '계란후라이' },
+            { name: '삼겹살김치찜', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 60, ingredients: ['삼겹살', '김치'], childMenu: '두부' },
+            { name: '돼지고기 두루치기', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '야채', '고추장'], childMenu: '상추' },
+            { name: '콩나물밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['콩나물', '밥', '간장'], childMenu: '오뎅탕' },
+            { name: '소갈비찜', type: 'cook', occasion: 'special', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 60, ingredients: ['소갈비', '간장', '야채'], childMenu: null },
+            { name: '카레라이스', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', time: 40, ingredients: ['카레가루', '고기', '야채'], childMenu: '피클' },
+            { name: '시래기 고등어조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 40, ingredients: ['시래기', '고등어', '간장'], childMenu: null },
+            { name: '폭찹스테이크', type: 'cook', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '소스'], childMenu: '샐러드' },
+            { name: '대패두루치기', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 20, ingredients: ['대패삼겹', '야채'], childMenu: null },
+            { name: '감자탕', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '라면' },
+            { name: '삼겹살 꽈리고추 볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['삼겹살', '꽈리고추', '간장'], childMenu: null },
+            { name: '버섯 불고기 전골', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '국물/찌개', time: 40, ingredients: ['버섯', '불고기', '국물'], childMenu: '당면' },
+
+            // 새로 추가된 건강식 레시피 (웹 기반, 영양 균형 고려)
+            { name: 'Hoedeopbap (생선 비빔밥)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['생선', '채소', '고추장'], childMenu: '야채무침' },
+            { name: 'Samgyetang (삼계탕)', type: 'cook', occasion: 'special', cuisine: '건강식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '인삼', '대추'], childMenu: '김치' },
+            { name: 'Yukgaejang (육개장)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'rainy', method: '국물/찌개', time: 60, ingredients: ['소고기', '채소', '고춧가루'], childMenu: null },
+            { name: 'Jjimdak (찜닭)', type: 'cook', occasion: 'gathering', cuisine: '건강식', feeling: 'great', method: '찜/조림', time: 40, ingredients: ['닭', '채소', '간장'], childMenu: '당면' },
+            { name: 'Gyeran Mari (계란말이)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'tired', method: '볶음/구이', time: 20, ingredients: ['계란', '당근', '대파'], childMenu: '야채스틱' },
+            { name: 'Gyeran Jjim (계란찜)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'stress', method: '찜/조림', time: 20, ingredients: ['계란', '소금', '물'], childMenu: '두부' },
+            { name: 'Gamja-tang (감자탕)', type: 'cook', occasion: 'gathering', cuisine: '건강식', feeling: 'rainy', method: '국물/찌개', time: 60, ingredients: ['돼지고기', '감자', '들깨'], childMenu: '김' },
+            { name: 'Kimchi Fried Rice (김치볶음밥)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'great', method: '볶음/구이', time: 20, ingredients: ['김치', '밥', '야채'], childMenu: '계란' },
+            { name: 'Dak Bulgogi (닭불고기)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['닭', '간장', '마늘'], childMenu: '상추쌈' },
+            { name: 'Spicy Chicken Bulgogi (매운 닭불고기)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['닭', '고추장', '야채'], childMenu: null },
+            { name: 'Dakdoritang (닭도리탕)', type: 'cook', occasion: 'daily', cuisine: '건강식', feeling: 'rainy', method: '국물/찌개', time: 60, ingredients: ['닭', '감자', '고추장'], childMenu: '야채' },
+            { name: 'Air Fryer Korean Fried Chicken (에어프라이어 치킨)', type: 'cook', occasion: 'gathering', cuisine: '건강식', feeling: 'great', method: '튀김/오븐', time: 40, ingredients: ['닭', '고추장', '빵가루'], childMenu: '치즈볼' },
+            { name: 'Dak Galbi (닭갈비)', type: 'cook', occasion: 'gathering', cuisine: '건강식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['닭', '고추장', '치즈'], childMenu: '야채' },
+            { name: 'Bibimbap (비빔밥)', type: 'delivery', occasion: 'daily', cuisine: '건강식', feeling: 'tired', method: '면/밥', childMenu: '계란' },
+            { name: 'Sundubu Jjigae (순두부찌개)', type: 'delivery', occasion: 'daily', cuisine: '건강식', feeling: 'rainy', method: '국물/찌개', childMenu: '김치' }
         ];
 
         // --- State Management ---
@@ -341,7 +430,7 @@
                     return true;
                 });
 
-                if (selection.type === 'cook') {
+                if (filters.type === 'cook') {
                     possible = possible.filter(r => r.time <= parseInt(selection.time || 60)); // Default to max time if not set
                     const userIngredients = document.getElementById('ingredients').value.split(',').map(item => item.trim()).filter(Boolean);
                     if (userIngredients.length > 0 && possible.length > 1) {
@@ -404,7 +493,7 @@
                 
                 html += `<li class="p-4 border rounded-lg bg-gray-50">
                             <div class="font-bold text-xl text-indigo-700">${index + 1}. ${recipeName}</div>`;
-                if (recipe.childMenu) {
+                if (recipe.childMenu && selection.children > 0) {
                     html += `<p class="mt-1 text-sm text-gray-600">아이와 함께라면 <span class="font-semibold text-green-600">${recipe.childMenu}</span> 메뉴도 좋아요!</p>`;
                 }
                 html += `<div class="mt-2 text-xs text-gray-500 bg-gray-200 inline-block px-2 py-1 rounded-full">${tags}</div>`;
@@ -482,9 +571,11 @@
             responseDiv.textContent = '';
             
             let prompt = '';
+            let kidFriendlyPrompt = selection.children > 0 ? " 아이도 먹을 수 있게 맵지 않게 만드는 팁도 포함해주면 좋겠어." : "";
+
             if (type === 'recipe') {
                 modalTitle.textContent = `AI가 제안하는 '${menuName}' 레시피`;
-                prompt = `'${menuName}'을 집에서 간단하게 만들 수 있는 레시피를 알려줘. 요리 초보자도 따라하기 쉽게 단계별로 설명해줘. 아이도 먹을 수 있게 맵지 않게 만드는 팁도 포함해주면 좋겠어.`;
+                prompt = `'${menuName}'을 집에서 간단하게 만들 수 있는 레시피를 알려줘. 요리 초보자도 따라하기 쉽게 단계별로 설명해줘.${kidFriendlyPrompt}`;
             } else if (type === 'sides') {
                 modalTitle.textContent = `AI가 추천하는 '${menuName}'과 어울리는 반찬`;
                 prompt = `'${menuName}'을 메인 메뉴로 저녁 식사를 할 거야. 이 메뉴와 잘 어울리는 한국식 반찬 3가지를 추천하고, 왜 잘 어울리는지 간단하게 이유도 설명해줘.`;
