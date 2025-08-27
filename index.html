@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리집 저녁 메뉴룰렛 (v19 - 최종 완성)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .option-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .option-card.selected {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .counter-btn {
+            transition: background-color 0.2s;
+        }
+        .counter-btn:hover {
+            background-color: #d1d5db;
+        }
+        #recommendation-card, .conditional-section {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, max-height 0.5s ease-in-out;
+        }
+        .hidden-section {
+            opacity: 0;
+            transform: translateY(-10px);
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        /* Gemini Modal Styles */
+        #gemini-modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #gemini-modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        /* Simple spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Toast Notification */
+        #toast {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">우리집 저녁 메뉴룰렛 🍽️</h1>
+            <p class="text-gray-600 mt-2">AI와 함께 완벽한 저녁 식사를 계획해보세요!</p>
+        </header>
+
+        <main class="space-y-8">
+            <!-- Selection sections -->
+            <section>
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">1. 어떻게 드실 건가요?</h2>
+                <div id="type-options" class="grid grid-cols-2 gap-4">
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="cook">
+                        <div class="text-3xl mb-2">👩‍🍳</div><div class="font-semibold">직접 요리</div>
+                    </div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="delivery">
+                        <div class="text-3xl mb-2">🛵</div><div class="font-semibold">배달 음식</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">2. 가족이 어떻게 되나요?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center">
+                        <span class="text-lg">어른 🧑</span>
+                        <div class="flex items-center gap-3">
+                            <button class="counter-btn bg-gray-200 rounded-full w-8 h-8 text-lg font-bold" onclick="updateCounter('adults', -1)">-</button>
+                            <span id="adults-count" class="text-xl font-bold w-8">2</span>
+                            <button class="counter-btn bg-gray-200 rounded-full w-8 h-8 text-lg font-bold" onclick="updateCounter('adults', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center">
+                        <span class="text-lg">아이 🧒</span>
+                        <div class="flex items-center gap-3">
+                            <button class="counter-btn bg-gray-200 rounded-full w-8 h-8 text-lg font-bold" onclick="updateCounter('children', -1)">-</button>
+                            <span id="children-count" class="text-xl font-bold w-8">1</span>
+                            <button class="counter-btn bg-gray-200 rounded-full w-8 h-8 text-lg font-bold" onclick="updateCounter('children', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">3. 어떤 식사 자리인가요?</h2>
+                <div id="occasion-options" class="grid grid-cols-3 gap-4">
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="daily"><div class="text-3xl mb-2">🏡</div><div class="font-semibold">일상 식사</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="gathering"><div class="text-3xl mb-2">🎉</div><div class="font-semibold">소모임</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="special"><div class="text-3xl mb-2">💖</div><div class="font-semibold">특별한 날</div></div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">4. 오늘의 기분은 어떠세요?</h2>
+                <div id="feeling-options" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="stress"><div class="text-3xl mb-2">😡</div><div class="font-semibold">스트레스 확!</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="tired"><div class="text-3xl mb-2">😪</div><div class="font-semibold">몸도 마음도 지쳤어</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="great"><div class="text-3xl mb-2">😄</div><div class="font-semibold">기분 최고!</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="rainy"><div class="text-3xl mb-2">☔️</div><div class="font-semibold">비도 오고 그래서...</div></div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">5. 어떤 종류의 음식을 원하세요?</h2>
+                <div id="cuisine-options" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="한식"><div class="text-3xl mb-2">🇰🇷</div><div class="font-semibold">한식</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="중식"><div class="text-3xl mb-2">🇨🇳</div><div class="font-semibold">중식</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="양식"><div class="text-3xl mb-2">🍕</div><div class="font-semibold">양식/치킨</div></div>
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="분식"><div class="text-3xl mb-2">떡볶이</div><div class="font-semibold">분식</div></div>
+                </div>
+            </section>
+            
+            <!-- Dynamic Method Section -->
+            <section id="method-section" class="conditional-section hidden-section">
+                <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">6. 어떤 방식으로 요리된 음식이 좋나요?</h2>
+                <div id="method-options" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    <!-- Options will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- Cooking-specific options -->
+            <div id="cooking-options" class="space-y-8 conditional-section hidden-section">
+                <section>
+                    <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">7. 요리 시간은 어느 정도?</h2>
+                    <div id="time-options" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="20"><div class="text-2xl mb-2">⚡️</div><div class="font-semibold">20분 이내</div></div>
+                        <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="40"><div class="text-2xl mb-2">🍳</div><div class="font-semibold">30-40분</div></div>
+                        <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="60"><div class="text-2xl mb-2">⏳</div><div class="font-semibold">1시간 이상</div></div>
+                    </div>
+                </section>
+                <section>
+                    <h2 class="text-xl font-semibold mb-4 border-l-4 border-indigo-500 pl-3">8. 꼭 써야 할 재료가 있나요? (선택)</h2>
+                    <input id="ingredients" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="예: 팽이버섯, 두부, 김치">
+                </section>
+            </div>
+
+            <!-- Recommend Button -->
+            <div class="text-center pt-4">
+                <button id="recommend-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">
+                    메뉴 추천받기!
+                </button>
+            </div>
+
+            <!-- Recommendation Result -->
+            <div id="recommendation-card" class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-500 hidden opacity-0 transform -translate-y-4">
+                <h3 id="recommendation-title" class="text-2xl font-bold text-center mb-4">오늘의 추천 메뉴 Top 5</h3>
+                <div id="result" class="text-center"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Gemini AI Modal -->
+    <div id="gemini-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div id="gemini-modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col opacity-0 transform scale-95">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h4 id="gemini-modal-title" class="text-xl font-bold text-indigo-700">AI의 답변</h4>
+                <button id="gemini-modal-close" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="gemini-modal-body" class="p-6 overflow-y-auto">
+                <div id="gemini-loader" class="flex justify-center items-center py-10"><div class="loader"></div></div>
+                <div id="gemini-response" class="prose max-w-none whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2">
+        클립보드에 복사되었습니다!
+    </div>
+
+    <script>
+        // --- Database ---
+        const recipes = [
+            // 직접 요리
+            { name: '돼지고기 김치찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['돼지고기', '김치'], childMenu: '계란찜' }, { name: '차돌 된장찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '국물/찌개', time: 20, ingredients: ['차돌박이', '된장'], childMenu: '어묵볶음' }, { name: '얼큰 순두부찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 20, ingredients: ['순두부', '계란'], childMenu: '콩나물무침' }, { name: '소고기 뭇국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['소고기', '무'], childMenu: '동그랑땡' }, { name: '닭볶음탕', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '국물/찌개', time: 60, ingredients: ['닭', '감자', '고추장'], childMenu: '콘치즈' }, { name: '누룽지 백숙', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '누룽지'], childMenu: '겉절이' }, { name: '김치볶음밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['김치', '밥', '계란'], childMenu: '계란국' }, { name: '스팸마요덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['스팸', '마요네즈', '계란'], childMenu: null }, { name: '간장계란밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['계란', '간장', '버터'], childMenu: null }, { name: '비빔국수', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['소면', '고추장', '오이'], childMenu: '삶은계란' }, { name: '제육볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '고추장'], childMenu: '상추쌈' }, { name: '오징어볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['오징어', '고추장'], childMenu: '콩나물국' }, { name: '소불고기', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '버섯'], childMenu: null }, { name: 'LA갈비구이', type: 'cook', occasion: 'special', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 60, ingredients: ['LA갈비', '간장'], childMenu: '양파절임' }, { name: '간장 찜닭', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 60, ingredients: ['닭', '감자', '당면'], childMenu: null }, { name: '돼지고기 김치찜', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 60, ingredients: ['돼지고기', '김치'], childMenu: '계란말이' }, { name: '두부조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '찜/조림', time: 20, ingredients: ['두부', '간장'], childMenu: '김' }, { name: '고등어조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 40, ingredients: ['고등어', '무'], childMenu: '미역국' }, { name: '에어프라이어 통삼겹', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '튀김/오븐', time: 60, ingredients: ['삼겹살', '허브솔트'], childMenu: '비빔면' }, { name: '마파두부 덮밥', type: 'cook', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['두부', '돼지고기', '두반장'], childMenu: '계란탕' }, { name: '고추잡채', type: 'cook', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '피망', '고추'], childMenu: '꽃빵' }, { name: '크림 파스타', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['파스타면', '생크림', '베이컨'], childMenu: null }, { name: '토마토 리조또', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '면/밥', time: 40, ingredients: ['쌀', '토마토소스'], childMenu: '피클' }, { name: '함박스테이크', type: 'cook', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '돼지고기', '양파'], childMenu: null }, { name: '치킨 가라아게', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 40, ingredients: ['닭다리살', '튀김가루'], childMenu: '양배추샐러드' }, { name: '콘치즈', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 20, ingredients: ['옥수수콘', '치즈', '마요네즈'], childMenu: null },
+            // 배달 음식
+            { name: '매운 족발', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '주먹밥' }, { name: '보쌈', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '막국수' }, { name: '아구찜', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '볶음밥' }, { name: '찜닭', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '누룽지' }, { name: '감자탕', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '라면사리' }, { name: '부대찌개', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '햄사리' }, { name: '육회비빔밥', type: 'delivery', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', childMenu: '소고기뭇국' }, { name: '김치전', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '볶음/구이', childMenu: '막걸리(어른용!)' }, { name: '짜장면 & 탕수육', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'great', method: '면/밥', childMenu: '군만두' }, { name: '중화 비빔밥', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', childMenu: '짬뽕국물' }, { name: '해물 짬뽕', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'rainy', method: '국물/찌개', childMenu: '군만두' }, { name: '마라탕', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'stress', method: '국물/찌개', childMenu: '꿔바로우' }, { name: '양장피', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', childMenu: '고량주(어른용!)' }, { name: '후라이드 & 양념치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈볼' }, { name: '매운 숯불 바베큐 치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'stress', method: '튀김/오븐', childMenu: '우동사리' }, { name: '피자', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈오븐스파게티' }, { name: '로제 파스타', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', childMenu: '마늘빵' }, { name: '스테이크', type: 'delivery', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', childMenu: '가니쉬' }, { name: '돈까스', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '튀김/오븐', childMenu: '미니우동' }, { name: '엽기 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'stress', method: '국물/찌개', childMenu: '순대, 컵밥' }, { name: '로제 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'great', method: '국물/찌개', childMenu: '중국당면' }, { name: '라볶이', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'rainy', method: '국물/찌개', childMenu: '김밥' }, { name: '쫄면', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'stress', method: '면/밥', childMenu: '튀김만두' }, { name: '따뜻한 쌀국수', type: 'delivery', occasion: 'daily', cuisine: '기타', feeling: 'tired', method: '국물/찌개', childMenu: '짜조' }
+        ];
+
+        // --- State Management ---
+        const selection = { type: null, adults: 2, children: 1, occasion: null, feeling: null, cuisine: null, method: null, time: null };
+        let cuisineToMethodMap = {};
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            buildCuisineMethodMap();
+            setupTypeSelection();
+            setupCuisineSelection();
+            setupOptionSelection('occasion-options', 'occasion');
+            setupOptionSelection('feeling-options', 'feeling');
+            setupOptionSelection('method-options', 'method');
+            setupOptionSelection('time-options', 'time');
+            document.getElementById('recommend-btn').addEventListener('click', getRecommendation);
+            
+            const modalOverlay = document.getElementById('gemini-modal-overlay');
+            const modalCloseBtn = document.getElementById('gemini-modal-close');
+            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+            modalCloseBtn.addEventListener('click', closeModal);
+        });
+
+        // --- Core Functions ---
+        function updateCounter(type, value) {
+            const countElement = document.getElementById(`${type}-count`);
+            let currentCount = parseInt(countElement.innerText);
+            currentCount += value;
+            if (currentCount < 0) currentCount = 0;
+            countElement.innerText = currentCount;
+            selection[type] = currentCount;
+        }
+
+        function buildCuisineMethodMap() {
+            recipes.forEach(recipe => {
+                if (!cuisineToMethodMap[recipe.cuisine]) {
+                    cuisineToMethodMap[recipe.cuisine] = new Set();
+                }
+                if (recipe.method) {
+                     cuisineToMethodMap[recipe.cuisine].add(recipe.method);
+                }
+            });
+            for (const cuisine in cuisineToMethodMap) {
+                cuisineToMethodMap[cuisine] = Array.from(cuisineToMethodMap[cuisine]);
+            }
+        }
+
+        function setupTypeSelection() {
+            const container = document.getElementById('type-options');
+            const cookingOptionsDiv = document.getElementById('cooking-options');
+            container.addEventListener('click', (e) => {
+                const card = e.target.closest('.option-card');
+                if (!card) return;
+                container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selection.type = card.dataset.value;
+                if (selection.type === 'cook') {
+                    cookingOptionsDiv.classList.remove('hidden-section');
+                } else {
+                    cookingOptionsDiv.classList.add('hidden-section');
+                }
+            });
+        }
+        
+        function setupCuisineSelection() {
+            const container = document.getElementById('cuisine-options');
+            const methodSection = document.getElementById('method-section');
+            container.addEventListener('click', (e) => {
+                const card = e.target.closest('.option-card');
+                if (!card) return;
+
+                container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                
+                const selectedCuisine = card.dataset.value;
+                selection.cuisine = selectedCuisine;
+                selection.method = null; 
+                
+                const availableMethods = cuisineToMethodMap[selectedCuisine] || [];
+                updateMethodOptions(availableMethods);
+                methodSection.classList.remove('hidden-section');
+            });
+        }
+        
+        function updateMethodOptions(methods) {
+            const container = document.getElementById('method-options');
+            container.innerHTML = ''; 
+            const methodIcons = { '국물/찌개': '🍲', '찜/조림': '🥘', '볶음/구이': '🍳', '면/밥': '🍚', '튀김/오븐': '🍗' };
+
+            methods.forEach(method => {
+                const icon = methodIcons[method] || '🍴';
+                const cardHTML = `
+                    <div class="option-card bg-white p-4 rounded-lg shadow-sm border-2 border-transparent text-center" data-value="${method}">
+                        <div class="text-3xl mb-2">${icon}</div>
+                        <div class="font-semibold">${method}</div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        function setupOptionSelection(containerId, selectionKey) {
+            const container = document.getElementById(containerId);
+            container.addEventListener('click', (e) => {
+                const card = e.target.closest('.option-card');
+                if (!card) return;
+                container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selection[selectionKey] = card.dataset.value;
+            });
+        }
+        
+        function showMessage(title, message) {
+            const recommendationCard = document.getElementById('recommendation-card');
+            const titleEl = document.getElementById('recommendation-title');
+            const resultDiv = document.getElementById('result');
+
+            titleEl.textContent = title;
+            resultDiv.innerHTML = `<p class="text-red-500 font-semibold">${message}</p>`;
+
+            recommendationCard.classList.remove('hidden');
+            setTimeout(() => recommendationCard.classList.remove('opacity-0', '-translate-y-4'), 10);
+        }
+
+        function getRecommendation() {
+            if (!selection.type || !selection.occasion || !selection.feeling || !selection.cuisine || !selection.method) {
+                showMessage('⚠️ 확인해주세요!', '모든 필수 항목(1~5번)을 선택해주세요!');
+                return;
+            }
+            
+            let finalRecipes = [];
+            
+            // --- Fallback Logic ---
+            const filterAndSort = (filters) => {
+                let possible = recipes.filter(r => {
+                    for (const key in filters) {
+                        if (r[key] !== filters[key]) return false;
+                    }
+                    return true;
+                });
+
+                if (selection.type === 'cook') {
+                    possible = possible.filter(r => r.time <= parseInt(selection.time || 60)); // Default to max time if not set
+                    const userIngredients = document.getElementById('ingredients').value.split(',').map(item => item.trim()).filter(Boolean);
+                    if (userIngredients.length > 0 && possible.length > 1) {
+                        possible.forEach(r => {
+                            r.score = 0;
+                            userIngredients.forEach(ing => {
+                                if (r.ingredients && r.ingredients.some(recipeIng => recipeIng.includes(ing)) || r.name.includes(ing)) r.score++;
+                            });
+                        });
+                        possible.sort((a, b) => b.score - a.score);
+                    }
+                }
+                return possible;
+            };
+
+            const baseFilters = { type: selection.type, occasion: selection.occasion, feeling: selection.feeling, cuisine: selection.cuisine, method: selection.method };
+            
+            finalRecipes = filterAndSort(baseFilters);
+
+            if (finalRecipes.length === 0) { // Fallback 1: Relax method
+                const relaxedFilters = { ...baseFilters };
+                delete relaxedFilters.method;
+                finalRecipes = filterAndSort(relaxedFilters);
+            }
+            if (finalRecipes.length === 0) { // Fallback 2: Relax feeling
+                const relaxedFilters = { ...baseFilters };
+                delete relaxedFilters.feeling;
+                delete relaxedFilters.method;
+                finalRecipes = filterAndSort(relaxedFilters);
+            }
+            if (finalRecipes.length === 0) { // Fallback 3: Relax occasion
+                const relaxedFilters = { ...baseFilters };
+                delete relaxedFilters.occasion;
+                delete relaxedFilters.feeling;
+                delete relaxedFilters.method;
+                finalRecipes = filterAndSort(relaxedFilters);
+            }
+            
+            if (finalRecipes.length === 0) {
+                showMessage('😢 아쉬워요', '선택하신 조건에 딱 맞는 메뉴를 찾지 못했어요. 다른 옵션을 선택해보는 건 어떠세요?');
+                return;
+            }
+            displayResult(finalRecipes.slice(0, 5));
+        }
+
+        function displayResult(recipesToShow) {
+            const recommendationCard = document.getElementById('recommendation-card');
+            const titleEl = document.getElementById('recommendation-title');
+            const resultDiv = document.getElementById('result');
+            
+            titleEl.textContent = '오늘의 추천 메뉴 Top 5';
+            let html = '<ol class="space-y-4 text-left">';
+            recipesToShow.forEach((recipe, index) => {
+                const recipeName = recipe.name;
+                const feelingMap = { 'stress': '스트레스 확', 'tired': '지친 날', 'great': '기분 최고', 'rainy': '비 오는 날' };
+                const occasionMap = { 'daily': '일상 식사', 'gathering': '소모임', 'special': '특별한 날' };
+                
+                let tags = `#${occasionMap[recipe.occasion]} #${feelingMap[recipe.feeling]} #${recipe.cuisine} #${recipe.method}`;
+                if(recipe.type === 'cook') { tags += ` #${recipe.time}분소요`; } else { tags += ` #배달음식`; }
+                
+                html += `<li class="p-4 border rounded-lg bg-gray-50">
+                            <div class="font-bold text-xl text-indigo-700">${index + 1}. ${recipeName}</div>`;
+                if (recipe.childMenu) {
+                    html += `<p class="mt-1 text-sm text-gray-600">아이와 함께라면 <span class="font-semibold text-green-600">${recipe.childMenu}</span> 메뉴도 좋아요!</p>`;
+                }
+                html += `<div class="mt-2 text-xs text-gray-500 bg-gray-200 inline-block px-2 py-1 rounded-full">${tags}</div>`;
+                
+                html += `<div class="mt-3 flex flex-wrap gap-2">`;
+                if (recipe.type === 'cook') {
+                    html += `<button onclick="getGeminiResponse('${recipeName}', 'recipe')" class="text-sm bg-indigo-100 text-indigo-700 font-semibold py-1 px-3 rounded-full hover:bg-indigo-200 transition-colors">✨ 간단 레시피</button>
+                             <button onclick="getGeminiResponse('${recipeName}', 'sides')" class="text-sm bg-green-100 text-green-700 font-semibold py-1 px-3 rounded-full hover:bg-green-200 transition-colors">✨ 어울리는 반찬</button>`;
+                }
+                if (recipe.type === 'delivery') {
+                    html += `<button onclick="getGeminiResponse('${recipeName}', 'location')" class="text-sm bg-yellow-100 text-yellow-800 font-semibold py-1 px-3 rounded-full hover:bg-yellow-200 transition-colors">📍 주변 맛집 찾기</button>`;
+                }
+                html += `<button onclick="shareRecipe('${recipeName}', '${tags}')" class="text-sm bg-gray-200 text-gray-700 font-semibold py-1 px-3 rounded-full hover:bg-gray-300 transition-colors">🔗 공유하기</button>`;
+                html += `</div></li>`;
+            });
+            html += '</ol>';
+            resultDiv.innerHTML = html;
+
+            recommendationCard.classList.remove('hidden');
+            setTimeout(() => recommendationCard.classList.remove('opacity-0', '-translate-y-4'), 10);
+        }
+        
+        // --- Utility & Gemini AI Functions ---
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+            }, 2000);
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast();
+        }
+
+        function shareRecipe(name, tags) {
+            const shareText = `오늘 저녁 메뉴 추천!\n\n- 메뉴: ${name}\n- 태그: ${tags.replace(/ #/g, ', #')}`;
+            copyToClipboard(shareText);
+        }
+
+        function openModal() {
+            const modalOverlay = document.getElementById('gemini-modal-overlay');
+            const modalContent = document.getElementById('gemini-modal-content');
+            modalOverlay.classList.remove('hidden');
+            modalOverlay.classList.add('flex');
+            setTimeout(() => {
+                modalOverlay.classList.remove('opacity-0');
+                modalContent.classList.remove('opacity-0', 'scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modalOverlay = document.getElementById('gemini-modal-overlay');
+            const modalContent = document.getElementById('gemini-modal-content');
+            modalOverlay.classList.add('opacity-0');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                modalOverlay.classList.add('hidden');
+                modalOverlay.classList.remove('flex');
+            }, 300);
+        }
+
+        async function getGeminiResponse(menuName, type) {
+            const modalTitle = document.getElementById('gemini-modal-title');
+            const loader = document.getElementById('gemini-loader');
+            const responseDiv = document.getElementById('gemini-response');
+
+            loader.style.display = 'flex';
+            responseDiv.textContent = '';
+            
+            let prompt = '';
+            if (type === 'recipe') {
+                modalTitle.textContent = `AI가 제안하는 '${menuName}' 레시피`;
+                prompt = `'${menuName}'을 집에서 간단하게 만들 수 있는 레시피를 알려줘. 요리 초보자도 따라하기 쉽게 단계별로 설명해줘. 아이도 먹을 수 있게 맵지 않게 만드는 팁도 포함해주면 좋겠어.`;
+            } else if (type === 'sides') {
+                modalTitle.textContent = `AI가 추천하는 '${menuName}'과 어울리는 반찬`;
+                prompt = `'${menuName}'을 메인 메뉴로 저녁 식사를 할 거야. 이 메뉴와 잘 어울리는 한국식 반찬 3가지를 추천하고, 왜 잘 어울리는지 간단하게 이유도 설명해줘.`;
+            } else if (type === 'location') {
+                modalTitle.textContent = `AI가 추천하는 '${menuName}' 주변 맛집`;
+                prompt = `현재 위치는 대한민국 경기도 성남시 분당구입니다. 배달 음식으로 '${menuName}'을 먹고 싶습니다. 이 주변에서 '${menuName}'으로 유명한 로컬 맛집 위주로 3곳을 추천해주세요. 대형 프랜차이즈보다는 그 지역에서만 맛볼 수 있는 숨은 맛집이면 더 좋습니다. 각 식당의 특징도 한 줄로 간단하게 요약해주세요.`;
+            }
+            
+            openModal();
+
+            try {
+                const resultText = await callGeminiAPIWithExponentialBackoff(prompt);
+                responseDiv.textContent = resultText;
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                responseDiv.textContent = 'AI 응답을 가져오는 데 실패했습니다. 잠시 후 다시 시도해주세요.';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function callGeminiAPIWithExponentialBackoff(prompt, maxRetries = 3) {
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Provided by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status >= 500) { throw new Error(`API request failed with status ${response.status}`); }
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.error?.message || 'API request failed');
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Invalid response structure from API');
+                    }
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`);
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
