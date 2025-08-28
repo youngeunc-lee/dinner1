@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>우리집 저녁 메뉴룰렛 (v19 - 최종 완성)</title>
+    <title>우리집 저녁 메뉴룰렛 (v20 - 위치기반 수정)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -197,7 +197,7 @@
     <script>
         // --- Database ---
         const recipes = [
-            // 직접 요리 (기존)
+            // 직접 요리
             { name: '돼지고기 김치찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 40, ingredients: ['돼지고기', '김치'], childMenu: '계란찜' }, { name: '차돌 된장찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '국물/찌개', time: 20, ingredients: ['차돌박이', '된장'], childMenu: '어묵볶음' }, { name: '얼큰 순두부찌개', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', time: 20, ingredients: ['순두부', '계란'], childMenu: '콩나물무침' }, { name: '소고기 뭇국', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['소고기', '무'], childMenu: '동그랑땡' }, { name: '닭볶음탕', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '국물/찌개', time: 60, ingredients: ['닭', '감자', '고추장'], childMenu: '콘치즈' }, { name: '누룽지 백숙', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'tired', method: '국물/찌개', time: 60, ingredients: ['닭', '누룽지'], childMenu: '겉절이' }, { name: '김치볶음밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['김치', '밥', '계란'], childMenu: '계란국' }, { name: '스팸마요덮밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['스팸', '마요네즈', '계란'], childMenu: null }, { name: '간장계란밥', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', time: 20, ingredients: ['계란', '간장', '버터'], childMenu: null }, { name: '비빔국수', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['소면', '고추장', '오이'], childMenu: '삶은계란' }, { name: '제육볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '고추장'], childMenu: '상추쌈' }, { name: '오징어볶음', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'stress', method: '볶음/구이', time: 40, ingredients: ['오징어', '고추장'], childMenu: '콩나물국' }, { name: '소불고기', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '버섯'], childMenu: null }, { name: 'LA갈비구이', type: 'cook', occasion: 'special', cuisine: '한식', feeling: 'great', method: '볶음/구이', time: 60, ingredients: ['LA갈비', '간장'], childMenu: '양파절임' }, { name: '간장 찜닭', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', time: 60, ingredients: ['닭', '감자', '당면'], childMenu: null }, { name: '돼지고기 김치찜', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 60, ingredients: ['돼지고기', '김치'], childMenu: '계란말이' }, { name: '두부조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '찜/조림', time: 20, ingredients: ['두부', '간장'], childMenu: '김' }, { name: '고등어조림', type: 'cook', occasion: 'daily', cuisine: '한식', feeling: 'rainy', method: '찜/조림', time: 40, ingredients: ['고등어', '무'], childMenu: '미역국' }, { name: '에어프라이어 통삼겹', type: 'cook', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '튀김/오븐', time: 60, ingredients: ['삼겹살', '허브솔트'], childMenu: '비빔면' }, { name: '마파두부 덮밥', type: 'cook', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', time: 20, ingredients: ['두부', '돼지고기', '두반장'], childMenu: '계란탕' }, { name: '고추잡채', type: 'cook', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['돼지고기', '피망', '고추'], childMenu: '꽃빵' }, { name: '크림 파스타', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', time: 20, ingredients: ['파스타면', '생크림', '베이컨'], childMenu: null }, { name: '토마토 리조또', type: 'cook', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '면/밥', time: 40, ingredients: ['쌀', '토마토소스'], childMenu: '피클' }, { name: '함박스테이크', type: 'cook', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', time: 40, ingredients: ['소고기', '돼지고기', '양파'], childMenu: null }, { name: '치킨 가라아게', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 40, ingredients: ['닭다리살', '튀김가루'], childMenu: '양배추샐러드' }, { name: '콘치즈', type: 'cook', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', time: 20, ingredients: ['옥수수콘', '치즈', '마요네즈'], childMenu: null },
             // 배달 음식
             { name: '매운 족발', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '주먹밥' }, { name: '보쌈', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '막국수' }, { name: '아구찜', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'stress', method: '찜/조림', childMenu: '볶음밥' }, { name: '찜닭', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'great', method: '찜/조림', childMenu: '누룽지' }, { name: '감자탕', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '라면사리' }, { name: '부대찌개', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '국물/찌개', childMenu: '햄사리' }, { name: '육회비빔밥', type: 'delivery', occasion: 'daily', cuisine: '한식', feeling: 'tired', method: '면/밥', childMenu: '소고기뭇국' }, { name: '김치전', type: 'delivery', occasion: 'gathering', cuisine: '한식', feeling: 'rainy', method: '볶음/구이', childMenu: '막걸리(어른용!)' }, { name: '짜장면 & 탕수육', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'great', method: '면/밥', childMenu: '군만두' }, { name: '중화 비빔밥', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'stress', method: '면/밥', childMenu: '짬뽕국물' }, { name: '해물 짬뽕', type: 'delivery', occasion: 'daily', cuisine: '중식', feeling: 'rainy', method: '국물/찌개', childMenu: '군만두' }, { name: '마라탕', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'stress', method: '국물/찌개', childMenu: '꿔바로우' }, { name: '양장피', type: 'delivery', occasion: 'gathering', cuisine: '중식', feeling: 'great', method: '볶음/구이', childMenu: '고량주(어른용!)' }, { name: '후라이드 & 양념치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈볼' }, { name: '매운 숯불 바베큐 치킨', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'stress', method: '튀김/오븐', childMenu: '우동사리' }, { name: '피자', type: 'delivery', occasion: 'gathering', cuisine: '양식', feeling: 'great', method: '튀김/오븐', childMenu: '치즈오븐스파게티' }, { name: '로제 파스타', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'great', method: '면/밥', childMenu: '마늘빵' }, { name: '스테이크', type: 'delivery', occasion: 'special', cuisine: '양식', feeling: 'great', method: '볶음/구이', childMenu: '가니쉬' }, { name: '돈까스', type: 'delivery', occasion: 'daily', cuisine: '양식', feeling: 'tired', method: '튀김/오븐', childMenu: '미니우동' }, { name: '엽기 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'stress', method: '국물/찌개', childMenu: '순대, 컵밥' }, { name: '로제 떡볶이', type: 'delivery', occasion: 'gathering', cuisine: '분식', feeling: 'great', method: '국물/찌개', childMenu: '중국당면' }, { name: '라볶이', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'rainy', method: '국물/찌개', childMenu: '김밥' }, { name: '쫄면', type: 'delivery', occasion: 'daily', cuisine: '분식', feeling: 'stress', method: '면/밥', childMenu: '튀김만두' }, { name: '따뜻한 쌀국수', type: 'delivery', occasion: 'daily', cuisine: '기타', feeling: 'tired', method: '국물/찌개', childMenu: '짜조' },
@@ -289,7 +289,7 @@
         function updateMethodOptions(methods) {
             const container = document.getElementById('method-options');
             container.innerHTML = ''; 
-            const methodIcons = { '국물/찌개': '🍲', '찜/조림': '🥘', '볶음/구이': '🍳', '면/밥': '🍚', '튀김/오븐': '🍗' };
+            const methodIcons = { '국물/찌개': '�', '찜/조림': '🥘', '볶음/구이': '🍳', '면/밥': '🍚', '튀김/오븐': '🍗' };
 
             methods.forEach(method => {
                 const icon = methodIcons[method] || '🍴';
@@ -385,7 +385,7 @@
             }
             
             if (finalRecipes.length === 0) {
-                showMessage('� 아쉬워요', '선택하신 조건에 딱 맞는 메뉴를 찾지 못했어요. 다른 옵션을 선택해보는 건 어떠세요?');
+                showMessage('😢 아쉬워요', '선택하신 조건에 딱 맞는 메뉴를 찾지 못했어요. 다른 옵션을 선택해보는 건 어떠세요?');
                 return;
             }
             displayResult(finalRecipes.slice(0, 5));
@@ -496,7 +496,16 @@
                 prompt = `'${menuName}'을 메인 메뉴로 저녁 식사를 할 거야. 이 메뉴와 잘 어울리는 한국식 반찬 3가지를 추천하고, 왜 잘 어울리는지 간단하게 이유도 설명해줘.`;
             } else if (type === 'location') {
                 modalTitle.textContent = `AI가 추천하는 '${menuName}' 주변 맛집`;
-                prompt = `현재 위치는 대한민국 경기도 성남시 분당구입니다. 배달 음식으로 '${menuName}'을 먹고 싶습니다. 이 주변에서 '${menuName}'으로 유명한 로컬 맛집 위주로 3곳을 추천해주세요. 대형 프랜차이즈보다는 그 지역에서만 맛볼 수 있는 숨은 맛집이면 더 좋습니다. 각 식당의 특징도 한 줄로 간단하게 요약해주세요.`;
+                
+                // Dynamic Location Prompt
+                try {
+                    const address = await getUserLocationAndAddress();
+                    prompt = `현재 위치는 '${address}'입니다. 배달 음식으로 '${menuName}'을 먹고 싶습니다. 이 주변에서 '${menuName}'으로 유명한 로컬 맛집 위주로 3곳을 추천해주세요. 대형 프랜차이즈보다는 그 지역에서만 맛볼 수 있는 숨은 맛집이면 더 좋습니다. 각 식당의 특징도 한 줄로 간단하게 요약해주세요.`;
+                } catch (error) {
+                    responseDiv.textContent = `위치 정보를 가져오는 데 실패했습니다: ${error.message}`;
+                    loader.style.display = 'none';
+                    return;
+                }
             }
             
             openModal();
@@ -512,11 +521,55 @@
             }
         }
 
+        function getUserLocationAndAddress() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error("이 브라우저에서는 위치 정보 기능을 지원하지 않습니다."));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        try {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                            if (!response.ok) {
+                                throw new Error("주소 변환에 실패했습니다.");
+                            }
+                            const data = await response.json();
+                            const address = data.display_name || "알 수 없는 주소";
+                            resolve(address);
+                        } catch (e) {
+                            reject(e);
+                        }
+                    },
+                    (error) => {
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                reject(new Error("위치 정보 제공을 거부하셨습니다."));
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                reject(new Error("위치 정보를 사용할 수 없습니다."));
+                                break;
+                            case error.TIMEOUT:
+                                reject(new Error("위치 정보를 가져오는 데 시간이 초과되었습니다."));
+                                break;
+                            default:
+                                reject(new Error("알 수 없는 오류가 발생했습니다."));
+                                break;
+                        }
+                    }
+                );
+            });
+        }
+
+
         async function callGeminiAPIWithExponentialBackoff(prompt, maxRetries = 3) {
             // =================================================================
             // =================== 중요! 여기에 API 키를 입력하세요! ===================
             // 아래 "YOUR_API_KEY" 부분을 복사한 API 키로 바꿔주세요.
-            const apiKey = "AIzaSyAWs_MA5tkb72dD0uoNut5iX5J-5Npdd2c"; 
+            const apiKey = "YOUR_API_KEY"; 
             // =================================================================
             
             if (apiKey === "YOUR_API_KEY" || !apiKey) {
@@ -565,4 +618,3 @@
 </body>
 </html>
 �
-
