@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>우리집 저녁 메뉴룰렛 (v22 - 위치기능 최종수정)</title>
+    <title>우리집 저녁 메뉴룰렛 (v23 - 최종 수정)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -385,7 +385,7 @@
             }
             
             if (finalRecipes.length === 0) {
-                showMessage('� 아쉬워요', '선택하신 조건에 딱 맞는 메뉴를 찾지 못했어요. 다른 옵션을 선택해보는 건 어떠세요?');
+                showMessage('😢 아쉬워요', '선택하신 조건에 딱 맞는 메뉴를 찾지 못했어요. 다른 옵션을 선택해보는 건 어떠세요?');
                 return;
             }
             displayResult(finalRecipes.slice(0, 5));
@@ -498,10 +498,12 @@
                 modalTitle.textContent = `AI가 추천하는 '${menuName}' 주변 맛집`;
                 openModal(); // Open modal first to show loading/permission state
                 try {
+                    responseDiv.textContent = '현재 위치를 확인 중입니다... 잠시만 기다려주세요.';
                     const address = await getUserAddress();
+                    responseDiv.textContent = `'${address}' 주변 맛집을 찾고 있습니다...`;
                     prompt = `현재 위치는 '${address}'입니다. 배달 음식으로 '${menuName}'을 먹고 싶습니다. 이 주변에서 '${menuName}'으로 유명한 로컬 맛집 위주로 3곳을 추천해주세요. 대형 프랜차이즈보다는 그 지역에서만 맛볼 수 있는 숨은 맛집이면 더 좋습니다. 각 식당의 특징도 한 줄로 간단하게 요약해주세요.`;
                 } catch (error) {
-                    responseDiv.textContent = `위치 정보를 가져오는 데 실패했습니다: ${error.message}`;
+                    responseDiv.textContent = `위치 정보를 가져오는 데 실패했습니다: ${error.message}\n\n브라우저 설정에서 위치 정보 접근을 허용했는지 확인해주세요. 이 기능은 https 환경에서만 정상 작동합니다.`;
                     loader.style.display = 'none';
                     return;
                 }
@@ -571,7 +573,7 @@
             // =================================================================
             // =================== 중요! 여기에 API 키를 입력하세요! ===================
             // 아래 "YOUR_API_KEY" 부분을 복사한 API 키로 바꿔주세요.
-            const apiKey = "YOUR_API_KEY"; 
+            const apiKey = "AIzaSyBeLMwL4YbcgqYmT70xWMCZYD--bIKGdRo"; 
             // =================================================================
             
             if (apiKey === "YOUR_API_KEY" || !apiKey) {
@@ -619,4 +621,3 @@
     </script>
 </body>
 </html>
-�
